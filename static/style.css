@@ -1,0 +1,13 @@
+div {
+  background-color: #6F77ED;
+  border-radius: 0.35em;
+  border: 5pt solid black;
+}
+
+h1 {
+    display: none;
+}
+
+body {
+    text-align: center;
+}
