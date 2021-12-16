@@ -118,6 +118,8 @@ def gen_theme_colors(color1, color2, number=5):
     for i in range(points_between_num):
         ratios.append(smaller_ratio + interval * (i + 1))
 
+    # while we need additional points smaller than the current-smallest ratio
+    # or bigger than the current-largest ratio
     while len(ratios) < number:
         if smaller_ratio - interval >= 0:
             smaller_ratio -= interval
@@ -128,6 +130,7 @@ def gen_theme_colors(color1, color2, number=5):
             bigger_ratio += interval
             ratios.append(bigger_ratio)
 
+    # convert ratio back into rgb values
     colors = []
     step_vector = [(diff[i] / abs(first_ratio - second_ratio)) for i in range(len(diff))]
     for each_ratio in ratios:
