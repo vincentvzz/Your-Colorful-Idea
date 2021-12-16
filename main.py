@@ -12,15 +12,18 @@ data = {
     "random_color": [],
     "color_data_input": "",
     "color_data_output": "",
-    "theme_color_series": []
+    "theme_color_series": [],
+    "error": ""
 }
 
 @app.route("/")
 def homepage():
+    data["error"] = ""
     return render_template('index.html', data=data)
 
 @app.route("/random")
 def random_handler():
+    data["error"] = ""
     data["random_color"] = []
     random_count = request.args.get("rand_num")
     color_str = safe_get(RANDOM_API + "?number=" + str(random_count))
@@ -31,6 +34,7 @@ def random_handler():
 
 @app.route("/transfer")
 def transfer_handler():
+    data["error"] = ""
     input_type = request.args.get("input_type")
     output_type = request.args.get("output_type")
     data["color_data_input"] = request.args.get("input_data")
@@ -49,16 +53,24 @@ def transfer_handler():
 
 @app.route("/series")
 def series_handler():
-    input_red = int(request.args.get("input_red"))
-    input_green = int(request.args.get("input_green"))
-    input_blue = int(request.args.get("input_blue"))
+    data["error"] = ""
+    input_red = request.args.get("input_red")
+    input_green = request.args.get("input_green")
+    input_blue = request.args.get("input_blue")
+
+    if input_red == '' or input_green == '' or input_blue == '':
+        data["error"] = "Invalid Input"
+        return render_template('index.html', data=data)
+
+    input_red = int(input_red)
+    input_green = int(input_green)
+    input_blue = int(input_blue)
     second_color_str = safe_get(RANDOM_API)
     if second_color_str is not None:
         second_color_data = json.loads(second_color_str)["rgb"][4:-1]
         color1 = [input_red, input_green, input_blue]
         color2 = second_color_data.split(", ")
         color2 = [int(num) for num in color2]
-        #color2 = [0, 0, 0]
         data["theme_color_series"] = gen_theme_colors(color1, color2)
     return render_template('index.html', data=data)
 

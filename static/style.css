@@ -1,4 +1,4 @@
-#random-display {
+#random-display, #series-display, #transfer-display {
   border-radius: 0.3em;
   border: 3pt solid black;
   display: flex;
@@ -14,3 +14,6 @@ body {
     margin: 10px;
 }
 
+#error {
+    color: red;
+}

@@ -7,6 +7,7 @@
 <body>
 <!--<header><h1 id="1">Your Colorful Idea</h1></header>-->
 <main>
+    <div><p id="error">{{data.error}}</p></div>
     <div>
         <div>
             <h2>We provide you for some random thoughts.</h2>
@@ -34,6 +35,9 @@
         <div>
             <h2> Would like to get another form of the color?</h2>
             <p>Select the form of your color you would like to change to:</p>
+            <p>RGB example: 100-90-50</p>
+            <p>HEX example: afAFAf</p>
+            <p>HSL example: 300-90-50</p>
             <form method="GET" action="/transfer">
                 <label for="input_data">Please enter color data you'd like to change:</label>
                 <input type="text" name="input_data" id="input_data"/>
