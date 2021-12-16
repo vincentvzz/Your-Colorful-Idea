@@ -2,18 +2,6 @@ from flask import Flask, render_template, request
 import logging
 import urllib.parse, urllib.request, urllib.error, json
 
-def safe_get(url):
-    try:
-        return urllib.request.urlopen(url).read().decode('utf-8')
-    except urllib.error.URLError as e:
-        if hasattr(e, "code"):
-            print("The server couldn't fulfill the request.")
-            print("Error code: ", e.code)
-        elif hasattr(e, 'reason'):
-            print("We failed to reach a server")
-            print("Reason: ", e.reason)
-        return None
-
 app = Flask(__name__)
 
 RANDOM_API = "https://x-colors.herokuapp.com/api/random"
@@ -23,7 +11,8 @@ TRANSFER_API_BASE = "https://x-colors.herokuapp.com/api/"
 data = {
     "random_color": [],
     "color_data_input": "",
-    "color_data_output": ""
+    "color_data_output": "",
+    "theme_color_series": []
 }
 
 @app.route("/")
@@ -58,7 +47,76 @@ def transfer_handler():
             data["color_data_output"] = output_data[output_type]
     return render_template('index.html', data=data)
 
-def
+@app.route("/series")
+def series_handler():
+    input_red = int(request.args.get("input_red"))
+    input_green = int(request.args.get("input_green"))
+    input_blue = int(request.args.get("input_blue"))
+    second_color_str = safe_get(RANDOM_API)
+    if second_color_str is not None:
+        second_color_data = json.loads(second_color_str)["rgb"][4:-1]
+        color1 = [input_red, input_green, input_blue]
+        color2 = second_color_data.split(", ")
+        color2 = [int(num) for num in color2]
+        #color2 = [0, 0, 0]
+        data["theme_color_series"] = gen_theme_colors(color1, color2)
+    return render_template('index.html', data=data)
+
+def safe_get(url):
+    try:
+        return urllib.request.urlopen(url).read().decode('utf-8')
+    except urllib.error.URLError as e:
+        if hasattr(e, "code"):
+            print("The server couldn't fulfill the request.")
+            print("Error code: ", e.code)
+        elif hasattr(e, 'reason'):
+            print("We failed to reach a server")
+            print("Reason: ", e.reason)
+        return None
+
+# two points; find a linear function that goes through them with in (255, 255, 255).
+# find a series of points on that line, save them in data["theme_color_series"]
+# color contains: [red, green, blue]
+def gen_theme_colors(color1, color2, number=5):
+    # find longest rgb difference between two colors
+    diff = [abs(color1[i] - color2[i]) for i in range(3)]
+    reference_color = diff.index(max(diff))
+    split_unit = 255 / number
+    first_ratio = color1[reference_color] / split_unit
+    second_ratio = color2[reference_color] / split_unit
+    # save each color points' ratio
+    ratios = [first_ratio, second_ratio]
+    smaller_ratio = min(ratios)
+    bigger_ratio = max(ratios)
+    # calculate how many points needed between these two colors
+    points_between_num = min(round(abs(first_ratio - second_ratio) - 0.5), 3)
+    interval = abs(first_ratio - second_ratio) / (points_between_num + 1)
+
+    for i in range(points_between_num):
+        ratios.append(smaller_ratio + interval * (i + 1))
+
+    print(ratios)
+    while len(ratios) < number:
+        if smaller_ratio - interval >= 0:
+            smaller_ratio -= interval
+            ratios.append(smaller_ratio)
+            if len(ratios) >= number:
+                break
+        if bigger_ratio + interval <= number:
+            bigger_ratio += interval
+            ratios.append(bigger_ratio)
+
+    colors = []
+    step_vector = [(diff[i] / abs(first_ratio - second_ratio)) for i in range(len(diff))]
+    for each_ratio in ratios:
+        ratio_diff = each_ratio - first_ratio
+        print(ratio_diff)
+        current_step = [round(ratio_diff * step_vector[i]) for i in range(len(step_vector))]
+        cur_color = []
+        for i in range(3):
+            cur_color.append(str(color1[i] + current_step[i]))
+        colors.append("rgb(" + ', '.join(cur_color) + ")")
+    return colors
 
 if __name__ == "__main__":
     app.run(host="localhost", port=8080, debug=True)
