@@ -35,9 +35,9 @@
         <div>
             <h2> Would like to get another form of the color?</h2>
             <p>Select the form of your color you would like to change to:</p>
-            <p>RGB example: 100-90-50</p>
-            <p>HEX example: afAFAf</p>
-            <p>HSL example: 300-90-50</p>
+            <p>RGB input example: 100-90-50, output example: rgb(100, 90, 50)</p>
+            <p>HEX input example: afAFAf, output example: #AFAFAF</p>
+            <p>HSL input example: 300-90-50, output example: hsl(300, 90%, 50%)</p>
             <form method="GET" action="/transfer">
                 <label for="input_data">Please enter color data you'd like to change:</label>
                 <input type="text" name="input_data" id="input_data"/>
@@ -63,7 +63,7 @@
 
     <div>
         <div>
-            <h2>Want to get a series of color?</h2>
+            <h2>Want to get a series of colors?</h2>
             <p>Please type in the rgb color that you would like to get a series for that color:</p>
             <form method="GET" action="/series">
                 <label for="input_red">Red:</label>
