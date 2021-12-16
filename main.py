@@ -18,14 +18,12 @@ app = Flask(__name__)
 
 RANDOM_API = "https://x-colors.herokuapp.com/api/random"
 
+TRANSFER_API_BASE = "https://x-colors.herokuapp.com/api/"
+
 data = {
-    "color_1": "#FFFFFF",
-    "color_2": "#FFFFFF",
-    "color_3": "#FFFFFF",
-    "color_4": "#FFFFFF",
-    "color_5": "#FFFFFF",
-    "random_color": ["#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"],
-    "color_from": ""
+    "random_color": [],
+    "color_data_input": "",
+    "color_data_output": ""
 }
 
 @app.route("/")
@@ -34,16 +32,33 @@ def homepage():
 
 @app.route("/random")
 def random_handler():
+    data["random_color"] = []
     random_count = request.args.get("rand_num")
-    for i in range(int(random_count)):
-        color_str = safe_get(RANDOM_API)
-        if color_str is not None:
-            color_data = json.loads(color_str)
-            data["random_color"][i] = color_data["hex"]
+    color_str = safe_get(RANDOM_API + "?number=" + str(random_count))
+    if color_str is not None:
+        color_data = json.loads(color_str)
+        data["random_color"] = [color["hex"] for color in color_data]
     return render_template('index.html', data=data)
 
+@app.route("/transfer")
+def transfer_handler():
+    input_type = request.args.get("input_type")
+    output_type = request.args.get("output_type")
+    data["color_data_input"] = request.args.get("input_data")
 
+    if input_type == output_type:
+        data["color_data_output"] = data["color_data_input"]
+    else:
+        request_url = TRANSFER_API_BASE + input_type + "2" + output_type + "?value=" + data["color_data_input"]
+        output_str = safe_get(request_url)
+        output_data = json.loads(output_str)
+        if "error" in output_data.keys():
+            data["color_data_output"] = "Please enter the correct format of color."
+        else:
+            data["color_data_output"] = output_data[output_type]
+    return render_template('index.html', data=data)
 
+def
 
 if __name__ == "__main__":
     app.run(host="localhost", port=8080, debug=True)

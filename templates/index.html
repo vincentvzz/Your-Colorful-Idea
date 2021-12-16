@@ -5,32 +5,60 @@
     <link rel="stylesheet" type= "text/css" href="../static/style.css"/>
 </head>
 <body>
-<header><h1 id="1">Your Colorful Idea</h1></header>
+<!--<header><h1 id="1">Your Colorful Idea</h1></header>-->
 <main>
     <div>
-        <h2>We provide you for some random thoughts.</h2>
-        <p>Please select how many colors you'd like to generate:</p>
-        <form action="/random" method="GET">
-            <select name="rand_num">
-                <option value="2"> 2 </option>
-                <option value="3" selected> 3 </option>
-                <option value="5"> 5 </option>
-            </select>
-            <input type="submit"/>
-        </form>
+        <div>
+            <h2>We provide you for some random thoughts.</h2>
+            <p>Please select how many colors you'd like to generate:</p>
+            <form action="/random" method="GET">
+                <select name="rand_num">
+                    <option value="2"> 2 </option>
+                    <option value="3" selected> 3 </option>
+                    <option value="5"> 5 </option>
+                </select>
+                <input type="submit"/>
+            </form>
+        </div>
+        <div id="random-display">
+            {% for each_color in data.random_color %}
+            <div class="each-color-display">
+                <div class="random-color" style="background: {{each_color}}; width: 50px; height: 50px"></div>
+                <p>{{each_color}}</p>
+            </div>
+            {% endfor %}
+        </div>
     </div>
-    <div id="random-display">
-        {% for each_color in data.random_color %}
-        <div style="background: {{each_color}}; width: 50px; height: 50px"></div>
-        <p>{{each_color}}</p>
-        {% endfor %}
-    </div>
-    <div>
-        <h2> Would like to get another form of the color?</h2>
-        <p>Select the form of your color you would like to change to:</p>
-        <form method="GET">
 
-        </form>
+    <div>
+        <div>
+            <h2> Would like to get another form of the color?</h2>
+            <p>Select the form of your color you would like to change to:</p>
+            <form method="GET" action="/transfer">
+                <label for="input_data">Please enter color data you'd like to change:</label>
+                <input type="text" name="input_data" id="input_data"/>
+                <label for="input_type">Please select type of your color data:</label>
+                <select name="input_type">
+                    <option value="hex">HEX</option>
+                    <option value="rgb">RGB</option>
+                    <option value="hsl">HSL</option>
+                </select>
+                <label for="output_type">Please select the type you want to get:</label>
+                <select name="output_type">
+                    <option value="hex">HEX</option>
+                    <option value="rgb">RGB</option>
+                    <option value="hsl">HSL</option>
+                </select>
+                <input type="submit"/>
+            </form>
+        </div>
+        <div id="transfer-display">
+            <p>{{data["color_data_output"]}}</p>
+        </div>
+    </div>
+
+    <div>
+        <h2>Want to get a series of color?</h2>
     </div>
 </main>
 </body>

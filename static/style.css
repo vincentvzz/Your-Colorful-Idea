@@ -1,13 +1,15 @@
-div {
-  background-color: #6F77ED;
-  border-radius: 0.35em;
-  border: 5pt solid black;
-}
-
-h1 {
-    display: none;
+#random-display {
+  border-radius: 0.3em;
+  border: 3pt solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 body {
     text-align: center;
+}
+
+.each-color-display {
+    margin: 10px;
 }
