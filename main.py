@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
-import logging
+import numpy
+
 import urllib.parse, urllib.request, urllib.error, json
 
 app = Flask(__name__)
